@@ -1,0 +1,172 @@
+*,*:before,*:after {
+	box-sizing: border-box;
+}
+body{
+	background-color: #afb0b1;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	font-family: big john;
+	margin: 0;
+	padding:0;
+	height: 100vh;
+}
+header{
+	height: 30%;
+}
+canvas{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+}
+.navbar-inverse{
+	background-color: transparent;
+	border-color: transparent;
+}
+.navbar-brand{
+	color: #000000;
+	font-size: 30px
+}
+.navbar-inverse .navbar-nav > li > a{
+	color: #000000;
+	font-size: 18px
+}
+
+
+.logo-img{
+    left: 40px;
+    float: left;
+    position: relative;
+    margin: 5px 35px 35px 20px;
+}
+.bg-div{
+   overflow: hidden;
+}
+.logo-center{
+    left: 26%;
+    top: 30.5%;
+    position: absolute;
+    margin: 10px 15px 15px 10px;
+}
+.image-center{
+   overflow: hidden;
+}
+
+
+.form-container {
+	display: flex;
+	transform: translate(0%,0%);
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+}
+
+form {
+    background: #6daedabb; /* Form background */
+    padding: 20px 30px; /* Padding inside the form */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    width: 300px; /* Set a width for the form */
+    text-align: center; /* Optional: Center-align text inside form */
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px; /* Space around the labels */
+    text-align: left; /* Align labels to the left */
+    font-size: 14px;
+    color: #000000;
+}
+
+form input {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+	color: #000000;
+	background-color: #ff000000;
+}
+
+form button {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #000000;
+    background-color: #007bff00; /* Button color */
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+form button:hover {
+	border: 1px solid #808080;
+	color:#fff;
+    background-color: #000000; /* Darker button on hover */
+}
+
+main {
+	position: absolute;
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #9b9b9b;
+	line-height: 3.8;
+	font-size: 80px;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+
+footer {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    text-align: center;
+    padding: 30px;
+    color: #fff;
+    background-color: transparent;
+    margin-top: 20px; /* Ensures footer stays below body-content */
+    position: relative; /* Keeps it in the document flow */
+}
+
+.footer > * {
+	flex: 1 100%;
+}
+
+.footer ul {
+	list-style: none;
+	padding-left: 0;
+}
+.footer li {
+	line-height: 2em;
+	align-items: center;
+}
+
+.footer-bottom {
+	text-align: center;
+	color: #000000;
+	padding-top: 60px;
+}
+
+
+@media screen and (min-width: 600px) {
+	.footer-right > * {
+		flex: 1;
+	}
+	.footer-left {
+		flex: 1 0px;
+	}
+	.footer-right {
+		flex: 2 0px;
+	}
+}

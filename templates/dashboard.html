@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>IHA089-LABS::Mail</title>
+		<link rel = "icon" href ="{{ url_for('static', filename='images/IHA089-logo.png') }}" type = "image/x-icon">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
+		<link href='https://fonts.googleapis.com/css?family=Abel' rel="stylesheet">
+		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+	</head>
+	<body>
+		<header>			
+			<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu" aria-expanded="false">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="index.html">
+							<img src="{{ url_for('static', filename='images/IHA089-logo.png') }}" alt="IHA089 Logo" style="height: 30px; display: inline-block; margin-right: 8px;">
+							<span style="color:#08088A"><strong>IHA089-Mail</strong></span>
+						</a>
+					</div>
+					<div class="collapse navbar-collapse" id="navbar-menu">
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="index.html">Home</a></li>
+							<li><a href="dashboard.html">Dashboard</a></li>
+							<li><a href="logout.html">Logout</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+		</header>
+		<body>
+			<div class="email-display">
+				<span><b>{{user}}</b></span>
+				<button class="copy-button" onclick="copyEmail()">Copy</button>
+				<div class="copy-message" id="copyMessage">Email copied!</div>
+			</div>
+			<div class="content-box" id="emailList">
+				{% for email in emails %}
+				<div class="email-item" data-id="{{ email[0] }}" onclick="showEmail(event, '{{ email[3] }}', '{{ email[4] }}')">
+					<p>{{ email[3] }}</p>
+					<p>{{ email[5] }}</p>
+				</div>
+				{% endfor %}
+			</div>
+			<div class="email-details" id="emailDetails">
+				<h2 id="emailSubject"></h2>
+				<p id="emailBody"></p>
+			</div>
+			<script>
+				function copyEmail() {
+					email = "{{user}}";
+					navigator.clipboard.writeText(email).then(() => {
+						const message = document.getElementById('copyMessage');
+						message.style.visibility = 'visible';
+						setTimeout(() => {
+							message.style.visibility = 'hidden';
+						}, 5000);
+					}).catch(err => {
+						console.error("Failed to copy email: ", err);
+					});
+				}
+		
+				function showEmail(event, subject, body) {
+					const emailDetails = document.getElementById('emailDetails');
+					const emailSubject = document.getElementById('emailSubject');
+					const emailBody = document.getElementById('emailBody');
+		
+					// Highlight the selected email
+					const emailItems = document.querySelectorAll('.email-item');
+					emailItems.forEach(item => item.classList.remove('selected'));
+		
+					const clickedEmail = event.currentTarget;
+					clickedEmail.classList.add('selected');
+		
+					emailSubject.textContent = subject;
+					emailBody.innerHTML = body;
+					emailDetails.style.display = 'block';
+				}
+		
+				
+			</script>
+		<footer class="footer">
+			
+			<div class="footer-bottom">
+				<p>Copyright © IHA089</p>
+			</div>
+			</footer>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	</body>
+</html>
