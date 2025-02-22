@@ -49,7 +49,6 @@ def check_database():
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
    
     if not os.path.isfile(db_path):
-        print("not present at "+db_path)
         create_database()
 
 check_database()
