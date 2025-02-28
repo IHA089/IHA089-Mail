@@ -9,6 +9,7 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
 MailServerIHA089 = Flask(__name__)
+MailServerIHA089.secret_key = "vulnerable_lab_by_IHA089"
 
 mail_loc = "IHA089-Mail"
 
