@@ -131,6 +131,9 @@ def join():
     email = request.form.get('email')
     username = request.form.get('username')
     password = request.form.get('password')
+    if not email.endswith('@iha089.org'):
+        error_message = "Only email with @iha089.org domain is allowed."
+        return render_template('join.html', error=error_message)
     hash_password = hashlib.md5(password.encode()).hexdigest()
     conn = get_db_connection()
     cursor = conn.cursor()
