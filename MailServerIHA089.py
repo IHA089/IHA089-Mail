@@ -170,7 +170,7 @@ def login():
             conn.close()
 
         response = make_response(redirect(url_for('dashboard')))
-        response.set_cookie("uuid", user_uuid, httponly=False)  # Insecure cookie
+        response.set_cookie("uuid", user_uuid, httponly=True, samesite="Strict")  
         response.set_cookie("jwt_token", jwt_token, httponly=True, samesite="Strict")
         return response
         
@@ -200,7 +200,7 @@ def join():
             cursor.execute("INSERT INTO mail_users (username, email, password, uuid) VALUES (?, ?, ?, ?)", (email, username, hash_password, user_uuid))
             conn.commit()
             response = make_response(render_template('login.html'))
-            response.set_cookie("uuid", user_uuid, httponly=True)  
+            response.set_cookie("uuid", user_uuid, httponly=True, samesite="Strict")  
             return response
         except sqlite3.Error as err:
             error_message = "Something went wrong, Please try again later."
@@ -250,7 +250,7 @@ def dashboard():
 def logout():
     session.clear() 
     response = make_response(redirect(url_for('login_html')))
-    response.set_cookie("uuid", "", httponly=True)
+    response.set_cookie("uuid", "", httponly=True, samesite="Strict")
     response.set_cookie("jwt_token", "", httponly=True, samesite="Strict")
     return response
 
