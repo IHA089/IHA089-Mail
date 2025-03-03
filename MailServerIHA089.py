@@ -3,6 +3,7 @@ from functools import wraps
 from flask_cors import CORS
 import jwt as pyjwt
 import sqlite3
+import uuid
 import hashlib
 import logging
 import os
