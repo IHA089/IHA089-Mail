@@ -200,7 +200,7 @@ def join():
         try:
             user_uuid = str(uuid.uuid4())
 
-            cursor.execute("INSERT INTO mail_users (username, email, password, uuid) VALUES (?, ?, ?, ?)", (email, username, hash_password, user_uuid))
+            cursor.execute("INSERT INTO mail_users (username, email, password, uuid) VALUES (?, ?, ?, ?)", (username, email, hash_password, user_uuid))
             conn.commit()
             response = make_response(render_template('login.html'))
             response.set_cookie("uuid", user_uuid, httponly=True, samesite="Strict")  
