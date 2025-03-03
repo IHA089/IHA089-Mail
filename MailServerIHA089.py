@@ -1,12 +1,8 @@
-from flask import Flask, request, render_template, session, jsonify, redirect, url_for
+from flask import Flask, request, make_response, render_template, session, jsonify, redirect, url_for
 from functools import wraps
 from flask_cors import CORS
 import jwt as pyjwt
-import sqlite3
-import uuid
-import hashlib
-import logging
-import os
+import sqlite3, datetime, uuid, hashlib, logging, os
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -14,6 +10,8 @@ log.setLevel(logging.ERROR)
 MailServerIHA089 = Flask(__name__)
 MailServerIHA089.secret_key = "vulnerable_lab_by_IHA089"
 CORS(MailServerIHA089, resources={r"/*": {"origins": []}})
+
+JWT_SECRET = "MoneyIsPower"
 
 mail_loc = "IHA089-Mail"
 
@@ -149,7 +147,7 @@ def login():
     hash_password = hashlib.md5(password.encode()).hexdigest()
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM mail_users WHERE email = ? AND password = ?", (username, hash_password))
+    cursor.execute("SELECT * FROM mail_users WHERE email = ? or username = ? AND password = ?", (username, username, hash_password))
     user = cursor.fetchone()
     conn.close()
 
@@ -167,7 +165,7 @@ def login():
         if 'uuid' not in user:
             conn = get_db_connection()
             cursor = conn.cursor()
-            cursor.execute("UPDATE users SET uuid = ? WHERE username = ?", (user_uuid, username))
+            cursor.execute("UPDATE mail_users SET uuid = ? WHERE username = ?", (user_uuid, username))
             conn.commit()
             conn.close()
 
@@ -185,7 +183,7 @@ def join():
     if 'user' in session:
         return render_template('dashboard.html', user=session.get('user'))
     email = request.form.get('email')
-    username = request.form.get('username')
+    username = request.form.get('fullname')
     password = request.form.get('password')
     if not email.endswith('@iha089.org'):
         error_message = "Only email with @iha089.org domain is allowed."
@@ -208,6 +206,7 @@ def join():
             response.set_cookie("uuid", user_uuid, httponly=True, samesite="Strict")  
             return response
         except sqlite3.Error as err:
+            print(err)
             error_message = "Something went wrong, Please try again later."
             return render_template('join.html', error=error_message)
         conn.close()
