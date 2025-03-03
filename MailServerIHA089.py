@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template, session, jsonify, redirect, url_for
 from functools import wraps
+from flask_cors import CORS
+import jwt as pyjwt
 import sqlite3
 import hashlib
 import logging
@@ -13,6 +15,8 @@ MailServerIHA089.secret_key = "vulnerable_lab_by_IHA089"
 
 mail_loc = "IHA089-Mail"
 
+user_data = {}
+
 def create_database():
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
     conn = sqlite3.connect(db_path)
@@ -23,12 +27,14 @@ def create_database():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
         email TEXT NOT NULL,
-        password TEXT NOT NULL
+        password TEXT NOT NULL,
+        uuid TEXT NOT NULL
     )
     ''')
     password="Admin@#$12"
     hash_password = hashlib.md5(password.encode()).hexdigest()
-    query = "INSERT INTO mail_users (username, email, password) VALUES ('Admin', 'admin@iha089.org', '"+hash_password+"')"
+    user_uuid = str(uuid.uuid4())
+    query = "INSERT INTO mail_users (username, email, password) VALUES ('Admin', 'admin@iha089.org', '"+hash_password+"', '"+user_uuid+"')"
 
     cursor.execute(query)
 
@@ -60,6 +66,13 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def check_cookies():
+    user_uuid = request.cookies.get("uuid")
+    jwt_token = request.cookies.get("jwt_token")
+
+    if user_uuid in user_data and jwt_token == user_data[user_uuid]:
+        decoded = pyjwt.decode(jwt_token, JWT_SECRET, algorithms="HS256")
+        session['user'] = decoded['username']
 
 def get_email_data(email):
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
@@ -74,30 +87,37 @@ def get_email_data(email):
 
 @MailServerIHA089.route('/')
 def home():
+    check_cookies()
     return render_template('index.html', user=session.get('user'))
 
 @MailServerIHA089.route('/index.html')
 def home_():
+    check_cookies()
     return render_template('index.html', user=session.get('user'))
 
 @MailServerIHA089.route('/login.html')
 def login_html():
+    check_cookies()
     return render_template('login.html')
 
 @MailServerIHA089.route('/join.html')
 def join_html():
+    check_cookies()
     return render_template('join.html')
 
 @MailServerIHA089.route('/acceptable.html')
 def acceptable_html():
+    check_cookies()
     return render_template('acceptable.html', user=session.get('user'))
 
 @MailServerIHA089.route('/term.html')
 def term_html():
+    check_cookies()
     return render_template('term.html', user=session.get('user'))
 
 @MailServerIHA089.route('/privacy.html')
 def privacy_html():
+    check_cookies()
     return render_template('privacy.html', user=session.get('user'))
 
 def login_required(f):
@@ -109,8 +129,19 @@ def login_required(f):
     return decorated_function
 
 
-@MailServerIHA089.route('/login', methods=['POST'])
+@MailServerIHA089.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        user_uuid = request.cookies.get("uuid")
+        jwt_token = request.cookies.get("jwt_token")
+
+        if user_uuid in user_data and jwt_token == user_data[user_uuid]:
+            decoded = pyjwt.decode(jwt_token, JWT_SECRET, algorithms="HS256")
+            session['user'] = decoded['username']
+            return redirect(url_for('dashboard'))
+
+        return render_template('login.html')
+
     username = request.form.get('username')
     password = request.form.get('password')
     hash_password = hashlib.md5(password.encode()).hexdigest()
@@ -122,22 +153,41 @@ def login():
 
     if user:
         session['user'] = username
-        return redirect(url_for('dashboard'))
+        user_uuid = user['uuid'] if 'uuid' in user else str(uuid.uuid4())
+
+        jwt_token = pyjwt.encode({
+            "username": username,
+            "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
+        }, JWT_SECRET, algorithm="HS256")
+
+        user_data[user_uuid] = jwt_token
+
+        if 'uuid' not in user:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("UPDATE users SET uuid = ? WHERE username = ?", (user_uuid, username))
+            conn.commit()
+            conn.close()
+
+        response = make_response(redirect(url_for('dashboard')))
+        response.set_cookie("uuid", user_uuid, httponly=False)  # Insecure cookie
+        response.set_cookie("jwt_token", jwt_token, httponly=True, samesite="Strict")
+        return response
+        
     error_message = "Invalid username or password. Please try again."
     return render_template('login.html', error=error_message)
 
-@MailServerIHA089.route('/join', methods=['POST'])
+@MailServerIHA089.route('/join', methods=['GET', 'POST'])
 def join():
+    check_cookies()
+    if 'user' in session:
+        return render_template('dashboard.html', user=session.get('user'))
     email = request.form.get('email')
     username = request.form.get('username')
     password = request.form.get('password')
-    if not email.endswith('@iha089.org'):
-        error_message = "Only email with @iha089.org domain is allowed."
-        return render_template('join.html', error=error_message)
     hash_password = hashlib.md5(password.encode()).hexdigest()
     conn = get_db_connection()
     cursor = conn.cursor()
-    query = f"INSERT INTO mail_users (username, email, password) VALUES ('{username}', '{email}', '{hash_password}')".format(email, username, hash_password)
     cursor.execute("SELECT * FROM mail_users where email = ?", (email,))
     if cursor.fetchone():
         error_message = "Email already taken. Please choose another."
@@ -145,9 +195,13 @@ def join():
         return render_template('join.html', error=error_message)
     else:
         try:
-            cursor.execute(query)
+            user_uuid = str(uuid.uuid4())
+
+            cursor.execute("INSERT INTO mail_users (username, email, password, uuid) VALUES (?, ?, ?, ?)", (email, username, hash_password, user_uuid))
             conn.commit()
-            return render_template('login.html')
+            response = make_response(render_template('login.html'))
+            response.set_cookie("uuid", user_uuid, httponly=True)  
+            return response
         except sqlite3.Error as err:
             error_message = "Something went wrong, Please try again later."
             return render_template('join.html', error=error_message)
@@ -180,6 +234,7 @@ def dcb8df93f8885473ad69681e82c423163edca1b13cf2f4c39c1956b4d32b4275():
 @MailServerIHA089.route("/dashboard.html")
 @login_required
 def dashboard():
+    check_cookies()
     if 'user' not in session:
         return redirect(url_for('login_html'))
     admin_list=['admin', 'administrator']
@@ -194,7 +249,10 @@ def dashboard():
 @MailServerIHA089.route('/logout.html')
 def logout():
     session.clear() 
-    return redirect(url_for('login_html'))
+    response = make_response(redirect(url_for('login_html')))
+    response.set_cookie("uuid", "", httponly=True)
+    response.set_cookie("jwt_token", "", httponly=True, samesite="Strict")
+    return response
 
 @MailServerIHA089.after_request
 def add_cache_control_headers(response):
