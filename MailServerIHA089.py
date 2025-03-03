@@ -35,7 +35,7 @@ def create_database():
     password="Admin@#$12"
     hash_password = hashlib.md5(password.encode()).hexdigest()
     user_uuid = str(uuid.uuid4())
-    query = "INSERT INTO mail_users (username, email, password) VALUES ('Admin', 'admin@iha089.org', '"+hash_password+"', '"+user_uuid+"')"
+    query = "INSERT INTO mail_users (username, email, password, uuid) VALUES ('Admin', 'admin@iha089.org', '"+hash_password+"', '"+user_uuid+"')"
 
     cursor.execute(query)
 
