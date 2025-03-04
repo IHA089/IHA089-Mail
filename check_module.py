@@ -42,8 +42,7 @@ def check_pyjwt_module():
 def install_each_module():
     flag=True
     module_packages = {
-        'jwt': 'jwt',
-        'flask_cors': 'flask-cors',
+        'jwt': 'jwt'
     }
 
     modules_to_check = list(module_packages.keys()) 
