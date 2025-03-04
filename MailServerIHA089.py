@@ -2,6 +2,7 @@ from flask import Flask, request, make_response, render_template, session, jsoni
 from functools import wraps
 from flask_cors import CORS
 import jwt as pyjwt
+import check_module
 import sqlite3, datetime, uuid, hashlib, logging, os
 
 log = logging.getLogger('werkzeug')
@@ -59,6 +60,9 @@ def check_database():
         create_database()
 
 check_database()
+
+if not check_module.install_each_module():
+    sys.exit(1)
 
 def get_db_connection():
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
