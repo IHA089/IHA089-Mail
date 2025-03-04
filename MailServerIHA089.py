@@ -1,6 +1,5 @@
 from flask import Flask, request, make_response, render_template, session, jsonify, redirect, url_for
 from functools import wraps
-from flask_cors import CORS
 import jwt as pyjwt
 import check_module
 import sqlite3, datetime, uuid, hashlib, logging, os
@@ -10,7 +9,6 @@ log.setLevel(logging.ERROR)
 
 MailServerIHA089 = Flask(__name__)
 MailServerIHA089.secret_key = "vulnerable_lab_by_IHA089"
-CORS(MailServerIHA089, resources={r"/*": {"origins": []}})
 
 JWT_SECRET = "MoneyIsPower"
 
@@ -77,6 +75,9 @@ def check_cookies():
     if user_uuid in user_data and jwt_token == user_data[user_uuid]:
         decoded = pyjwt.decode(jwt_token, JWT_SECRET, algorithms="HS256")
         session['user'] = decoded['username']
+        return True
+    else:
+        return False
 
 def get_email_data(email):
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
@@ -91,37 +92,44 @@ def get_email_data(email):
 
 @MailServerIHA089.route('/')
 def home():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     return render_template('index.html', user=session.get('user'))
 
 @MailServerIHA089.route('/index.html')
 def home_():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     return render_template('index.html', user=session.get('user'))
 
 @MailServerIHA089.route('/login.html')
 def login_html():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     return render_template('login.html')
 
 @MailServerIHA089.route('/join.html')
 def join_html():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     return render_template('join.html')
 
 @MailServerIHA089.route('/acceptable.html')
 def acceptable_html():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     return render_template('acceptable.html', user=session.get('user'))
 
 @MailServerIHA089.route('/term.html')
 def term_html():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     return render_template('term.html', user=session.get('user'))
 
 @MailServerIHA089.route('/privacy.html')
 def privacy_html():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     return render_template('privacy.html', user=session.get('user'))
 
 def login_required(f):
@@ -183,7 +191,8 @@ def login():
 
 @MailServerIHA089.route('/join', methods=['GET', 'POST'])
 def join():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     if 'user' in session:
         return render_template('dashboard.html', user=session.get('user'))
     email = request.form.get('email')
@@ -242,7 +251,8 @@ def dcb8df93f8885473ad69681e82c423163edca1b13cf2f4c39c1956b4d32b4275():
 @MailServerIHA089.route("/dashboard.html")
 @login_required
 def dashboard():
-    check_cookies()
+    if not check_cookies():
+        session.clear()
     if 'user' not in session:
         return redirect(url_for('login_html'))
     admin_list=['admin', 'administrator']
