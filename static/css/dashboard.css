@@ -1,35 +1,11 @@
-*,*:before,*:after {
-	box-sizing: border-box;
-}
-body{
-	background-color: #afb0b1;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-size: cover;
-	font-family: big john;
-	margin: 0;
-	padding:0;
+ body {
+	padding-top: 50px;
 	height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    color: #333;
-    flex-direction: column;
+	background-color: #afb0b1;
+	display: flex;
+	flex-direction: column;
 }
-header{
-	height: 30%;
-}
-canvas{
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: 1;
-}
+
 .navbar-inverse{
 	background-color: transparent;
 	border-color: transparent;
@@ -63,155 +39,99 @@ canvas{
    overflow: hidden;
 }
 
-.email-display {
+.email-container {
 	display: flex;
-	align-items: center;
-	margin-bottom: 20px;
-	font-size: 16px;
-	color: #000000;
+	flex: 1;
+	overflow: hidden;
+	margin: 20px;
 }
 
-.email-display span {
-	margin-right: 10px;
+.email-display {
+	padding: 15px;
+	background: #fff;
+	margin: 20px;
+	border-radius: 4px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.copy-button {
+.refresh-btn {
+	float: right;
+	padding: 6px 12px;
 	background-color: #007bff;
-	color: #fff;
+	color: white;
 	border: none;
 	border-radius: 4px;
-	padding: 5px 10px;
 	cursor: pointer;
-	font-size: 14px;
 }
 
-.copy-button:hover {
+.refresh-btn:hover {
 	background-color: #0056b3;
 }
 
-.copy-message {
-	margin-top: 10px;
-	font-size: 14px;
-	color: green;
-	visibility: hidden;
-}
-
 .content-box {
-	width: 90%;
-	max-width: 70%;
-	max-height: 300px;
-	padding: 20px;
-	background-color: #f5f5f5;
-	border: 1px solid #ddd;
-	border-radius: 8px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	width: 35%;
+	background: #fff;
+	border-right: 1px solid #ddd;
 	overflow-y: auto;
-}
-
-.email-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px;
-	border-bottom: 1px solid #ccc;
-	background-color: #fff;
-	border-radius: 4px;
-	margin-bottom: 10px;
-	cursor: pointer;
-}
-
-.email-item:hover {
-	background-color: #e9f5ff;
-}
-
-.email-item.selected {
-	background-color: #d0ebff;
-}
-
-.email-item:last-child {
-	margin-bottom: 0;
-	border-bottom: none;
-}
-
-.email-item p {
-	margin: 0;
-	font-size: 14px;
-}
-
-.email-item span {
-	font-size: 12px;
-	color: #888;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .email-details {
-	display: none;
-	margin-top: 20px;
+	width: 65%;
 	padding: 20px;
-	background-color: #ffffff;
-	border: 1px solid #ddd;
-	border-radius: 8px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	max-width: 70%;
+	background: #fff;
+	overflow-y: auto;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.email-details h3 {
-	margin: 0 0 10px;
+.email-item {
+	padding: 15px;
+	border-bottom: 1px solid #ddd;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.email-item:hover {
+	background-color: #f8f9fa;
+}
+
+.email-item.unread {
+	font-weight: bold;
+}
+
+.email-item.selected {
+	background-color: #e9ecef;
+}
+
+.email-subject {
 	font-size: 18px;
-	color: #333;
+	margin-bottom: 10px;
 }
 
-.email-details p {
-	font-size: 14px;
-	line-height: 1.6;
-	color: #555;
+.email-sender {
+	color: #666;
+	margin-bottom: 15px;
 }
 
-footer {
-    width: 100%;
-    display: flex;
-    flex-flow: row wrap;
-    text-align: center;
-    padding: 30px;
-    color: #fff;
-    background-color: transparent;
-    margin-top: 20px; /* Ensures footer stays below body-content */
-    position: relative; /* Keeps it in the document flow */
+.copy-button {
+	margin-left: 10px;
+	padding: 4px 8px;
+	background-color: #28a745;
+	color: white;
+	border: none;
+	border-radius: 4px;
 }
 
-.footer > * {
-	flex: 1 100%;
+.copy-message {
+	display: inline-block;
+	margin-left: 10px;
+	color: #28a745;
+	visibility: hidden;
 }
 
-.footer ul {
-	list-style: none;
-	padding-left: 0;
-}
-.footer li {
-	line-height: 2em;
-	align-items: center;
-}
-
-.footer-bottom {
+.footer {
+	padding: 10px;
 	text-align: center;
-	color: #000000;
-	padding-top: 60px;
+	background: #fff;
+	border-top: 1px solid #ddd;
 }
-
-
-@media screen and (min-width: 600px) {
-	.footer-right > * {
-		flex: 1;
-	}
-	.footer-left {
-		flex: 1 0px;
-	}
-	.footer-right {
-		flex: 2 0px;
-	}
-}
-
-
-
-
-
-
