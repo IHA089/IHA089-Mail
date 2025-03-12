@@ -95,8 +95,26 @@
 	background-color: #f8f9fa;
 }
 
-.email-item.unread {
+.email-item.unread p{
 	font-weight: bold;
+}
+
+.email-item.unread .new-mail-tag {
+        color: white;
+        background-color: #ff0000;
+        font-size: 12px;
+        padding: 2px 5px;
+        margin-left: 10px;
+        border-radius: 3px;
+        display: inline-block;
+}
+
+.email-item .new-mail-tag{
+	display: none;
+}
+
+.email-item.unread .new-mail-tag {
+	display: inline-block;
 }
 
 .email-item.selected {
