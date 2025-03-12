@@ -2,7 +2,7 @@ from flask import Flask, request, make_response, render_template, session, jsoni
 from functools import wraps
 import jwt as pyjwt
 import check_module
-import sqlite3, datetime, uuid, hashlib, logging, os
+import sqlite3, datetime, uuid, hashlib, logging, os, random, string
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -15,6 +15,10 @@ JWT_SECRET = "MoneyIsPower"
 mail_loc = "IHA089-Mail"
 
 user_data = {}
+
+def generate_random_text(length=20):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choices(characters, k=length))
 
 def create_database():
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
@@ -44,7 +48,9 @@ def create_database():
         sender VARCHAR(255) NOT NULL,
         subject VARCHAR(255),
         bodycontent TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        status TEXT DEFAULT 'unread',
+        unique_key VARCHAR(20) NOT NULL
     )
     ''')
 
@@ -83,7 +89,7 @@ def get_email_data(email):
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
     conn = sqlite3.connect(db_path)  
     cursor = conn.cursor()
-    query = "SELECT id, email, sender, subject, bodycontent, timestamp FROM Email_data WHERE email = '"+email+"'"
+    query = "SELECT id, email, sender, subject, bodycontent, timestamp, status, unique_key FROM Email_data WHERE email = '"+email+"'"
     cursor.execute(query)
     emails = cursor.fetchall()
     conn.close()
@@ -140,6 +146,21 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@MailServerIHA089.route('/mark-as-read', methods=['POST'])
+def mark_as_read():
+    data = request.get_json()
+    unique_key = data.get('unique_key')
+    if not unique_key:
+        return jsonify({'error':'unique key is required'}), 400
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE Email_data SET status = 'read ' WHERE unique_key = ?", (unique_key,))
+        conn.commit()
+        conn.close()
+        return jsonify({'message':'success'})
+    except Exception as e:
+        return jsonify({'error':str(e)}), 500
 
 @MailServerIHA089.route('/login', methods=['GET', 'POST'])
 def login():
@@ -219,7 +240,6 @@ def join():
             response.set_cookie("uuid", user_uuid, httponly=True, samesite="Strict")  
             return response
         except sqlite3.Error as err:
-            print(err)
             error_message = "Something went wrong, Please try again later."
             return render_template('join.html', error=error_message)
         conn.close()
@@ -233,11 +253,12 @@ def dcb8df93f8885473ad69681e82c423163edca1b13cf2f4c39c1956b4d32b4275():
         sender = data.get('sender')
         subject = data.get('subject')
         bodycontent = data.get('bodycontent')
-
+        
         if not email or not sender or not subject or not bodycontent:
             return jsonify({"error": "Invalid request"}), 400
-            
-        query = f"INSERT INTO Email_data (email, sender, subject, bodycontent) VALUES ('{email}', '{sender}', '{subject}', '{bodycontent}')".format(email, sender, subject, bodycontent)
+        unique_key = generate_random_text()
+
+        query = f"INSERT INTO Email_data (email, sender, subject, bodycontent, unique_key) VALUES ('{email}', '{sender}', '{subject}', '{bodycontent}', '{unique_key}')".format(email, sender, subject, bodycontent, unique_key)
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(query)
@@ -245,7 +266,7 @@ def dcb8df93f8885473ad69681e82c423163edca1b13cf2f4c39c1956b4d32b4275():
         return jsonify({"message": "success"}), 200
 
     except Exception as e:
-        return jsonify({"error": "An error occurred"}), 500
+        return jsonify({"error": 'error:'+e}), 500
 
 @MailServerIHA089.route('/dashboard')
 @MailServerIHA089.route("/dashboard.html")
