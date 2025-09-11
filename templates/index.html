@@ -3,61 +3,53 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<title>IHA089-LABS::Mail System</title>
-		<link rel = "icon" href ="{{ url_for('static', filename='images/logo.png') }}" type = "image/x-icon">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
-		<link href='https://fonts.googleapis.com/css?family=Abel' rel="stylesheet">
-		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<title>IHA089-Mail::Login</title>
+		<link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/x-icon">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 	</head>
 	<body>
-		<header>			
-			<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
-				<div class="container">
+		<div class="background-animation"></div>
+		<header>
+			<nav class="navbar">
+				<div class="container-fluid">
 					<div class="navbar-header">
-						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu" aria-expanded="false">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
 						<a class="navbar-brand" href="index.html">
-							<img src="{{ url_for('static', filename='images/logo.png') }}" alt="IHA089 Logo" style="height: 30px; display: inline-block; margin-right: 8px;">
-							<span style="color:#08088A"><strong>IHA089-Mail</strong>
+							<img src="{{ url_for('static', filename='images/logo.png') }}" alt="IHA089 Logo" class="brand-logo">
+							<span class="brand-text"><strong>IHA089-Mail</strong></span>
 						</a>
 					</div>
-					<div class="collapse navbar-collapse" id="navbar-menu">
-						<ul class="nav navbar-nav navbar-right">
-							<li><a href="index.html">Home</a></li>
-							{% if user %}
-                            	<li><a href="dashboard.html">Dashboard</a></li>
-                            	<li><a href="logout.html">Logout</a></li>
-                        	{% else %}
-								<li><a href="login.html">Login</a></li>
-								<li><a href="join.html">Create an account</a></li>
-							{% endif %}
-						</ul>
-					</div>
+					<ul class="nav navbar-nav">
+						<li><a href="index.html">Home</a></li>
+						{% if user %}
+							<li><a href="dashboard.html">Dashboard</a></li>
+							<li><a href="logout.html">Logout</a></li>
+						{% else %}
+							<li><a href="login.html">Login</a></li>
+							<li><a href="join.html">Create an account</a></li>
+						{% endif %}
+					</ul>
 				</div>
 			</nav>
 		</header>
-		<div class="content-box">
-			<h1>Welcome to IHA089 Vulnerable Labs</h1>
-			<p>Experience a realistic environment designed to enhance your ethical hacking and penetration testing skills. As part of our lab, we’ve integrated a custom email service, allowing you to create and log in with your unique email address (e.g., example@iha089.org).</p>
-			<p>This email system is hosted locally and tailored specifically for IHA089 Vulnerable Labs, offering a secure yet realistic platform for testing and experimentation. The email address you create here will be used within the labs to perform tasks such as account creation, login, signup confirmation, and other challenges designed to simulate real-world scenarios.</p>
-			<p>Receive mails for login or signup confirmation, or for other tasks as you navigate through and solve the challenges in IHA089 Vulnerable Labs.</p>
-			<p><strong>Start exploring and master the art of ethical hacking!</strong></p>
-		</div>
-		<footer class="footer">
-			
-			<div class="footer-bottom">
+		<main>
+			<div class="content-terminal">
+				<h1 class="terminal-title">IHA089-Mail</h1>
+				<div class="terminal-body">
+					<p>Experience a realistic environment designed to enhance your ethical hacking and penetration testing skills. As part of our lab, we’ve integrated a custom email service, allowing you to create and log in with your unique email address (e.g., example@iha089.org).</p>
+					<p>This email system is hosted locally and tailored specifically for IHA089 Vulnerable Labs, offering a secure yet realistic platform for testing and experimentation. The email address you create here will be used within the labs to perform tasks such as account creation, login, signup confirmation, and other challenges designed to simulate real-world scenarios.</p>
+					<p>Receive mails for login or signup confirmation, or for other tasks as you navigate through and solve the challenges in IHA089 Vulnerable Labs.</p>
+					<p><strong>Start exploring and master the art of ethical hacking!</strong></p>
+				</div>
+			</div>
+		</main>
+		<footer>
+			<div class="footer-content">
 				<p>Copyright © IHA089</p>
 			</div>
-			</footer>
+		</footer>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="{{ url_for('static', filename='js/typewriter.js') }}"></script>
 	</body>
 </html>
