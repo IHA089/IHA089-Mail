@@ -12,7 +12,7 @@ MailServerIHA089.secret_key = "vulnerable_lab_by_IHA089"
 
 JWT_SECRET = "MoneyIsPower"
 
-mail_loc = "IHA089-Mail"
+mail_loc = "IHA089_Mail"
 
 user_data = {}
 
