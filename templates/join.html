@@ -1,73 +1,61 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>IHA089-LABS::Mail</title>
-	<link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/x-icon">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link href='https://fonts.googleapis.com/css?family=Abel' rel="stylesheet">
-	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/join.css') }}">
-</head>
-
-<body>
-	<header>
-		<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-						data-target="#navbar-menu" aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="index.html">
-						<img src="{{ url_for('static', filename='images/logo.png') }}" alt="IHA089 Logo"
-							style="height: 30px; display: inline-block; margin-right: 8px;">
-						<span style="color:#08088A"><strong>IHA089-Mail</strong></span>
-					</a>
-				</div>
-				<div class="collapse navbar-collapse" id="navbar-menu">
-					<ul class="nav navbar-nav navbar-right">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>IHA089-Mail::Join</title>
+		<link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/x-icon">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/join.css') }}">
+	</head>
+	<body>
+		<div class="background-animation"></div>
+		<header>
+			<nav class="navbar">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="index.html">
+							<img src="{{ url_for('static', filename='images/logo.png') }}" alt="IHA089 Logo" class="brand-logo">
+							<span class="brand-text"><strong>IHA089-Mail</strong></span>
+						</a>
+					</div>
+					<ul class="nav navbar-nav">
 						<li><a href="index.html">Home</a></li>
 						<li><a href="login.html">Login</a></li>
 						<li><a href="join.html">Create an account</a></li>
 					</ul>
 				</div>
+			</nav>
+		</header>
+		<main class="join-page">
+			<div class="form-container terminal-join-box">
+				<h2 class="terminal-title">Join Now</h2>
+				<form action="/join" method="POST" id="joinForm" class="join-form">
+					<p id="error-message" class="error-message">{% if error %}{{ error }}{% endif %}</p>
+					<div class="form-group">
+						<label for="fullname">Full Name</label>
+						<input type="text" name="fullname" id="fullname" required>
+					</div>
+					<div class="form-group">
+						<label for="email">E-Mail</label>
+						<input type="text" name="email" id="email" required>
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" name="password" id="password" required>
+					</div>
+					<button type="submit" class="join-button">CREATE ACCOUNT</button>
+				</form>
 			</div>
-		</nav>
-	</header>
-	<div class="container">
-		<div class="form-container">
-			<form action="/join" method="POST" id="loginForm">
-				<p id="error-message" style="color: red;">{% if error %}{{ error }}{% endif %}</p>
-				<label><b>Full Name</b></label>
-				<input type="text" name="fullname" id="fullname" required>
-				<br>
-				<label><b>E-Mail</b></label>
-				<input type="text" name="email" id="email" required>
-				<br>
-				<label><b>Password</b></label>
-				<input type="password" name="password" id="password" required>
-				<br><br>
-				<button type="submit">Create</button>
-			</form>
-		</div>
-	</div>
-	<footer class="footer">
-		<div class="footer-bottom">
-			<p>Copyright © IHA089</p>
-		</div>>
-	</footer>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/error.js') }}"></script>
-</body>
-
+		</main>
+		<footer>
+			<div class="footer-content">
+				<p>Copyright © IHA089</p>
+			</div>
+		</footer>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/error.js') }}"></script>
+	</body>
 </html>
