@@ -3,79 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IHA089-LABS::Mail</title>
+    <title>IHA089-Mail::Dashboard</title>
     <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
-    <link href='https://fonts.googleapis.com/css?family=Abel' rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
-    <header>            
-        <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="index.html">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IHA089 Logo" style="height: 30px; display: inline-block; margin-right: 8px;">
-                        <span style="color:#08088A"><strong>IHA089-Mail</strong></span>
-                    </a>
-                </div>
-                <div class="collapse navbar-collapse" id="navbar-menu">
-                    <ul class="nav navbar-nav navbar-right">
+    <div class="background-animation"></div>
+
+    <header>
+			<nav class="navbar">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="index.html">
+							<img src="{{ url_for('static', filename='images/logo.png') }}" alt="IHA089 Logo" class="brand-logo">
+							<span class="brand-text"><strong>IHA089-Mail</strong></span>
+						</a>
+					</div>
+					<ul class="nav navbar-nav">
                         <li><a href="index.html">Home</a></li>
                         <li><a href="dashboard.html">Dashboard</a></li>
                         <li><a href="logout.html">Logout</a></li>
                     </ul>
+				</div>
+			</nav>
+		</header>
+    <main class="dashboard-main">
+        <div class="content-container">
+            <div class="dashboard-header-box">
+                <div class="user-info">
+                    <span class="user-email">
+                        <b>{{ user }}</b>
+                    </span>
+                    <button class="copy-button" onclick="copyEmail()">Copy</button>
+                    <div class="copy-message" id="copyMessage">Email copied!</div>
+                </div>
+                <div class="refresh-info">
+                    <button class="refresh-btn" onclick="refreshEmails()">Refresh</button>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="email-display">
-        <span><b>{{ user }}</b></span>
-        <button class="copy-button" onclick="copyEmail()">Copy</button>
-        <div class="copy-message" id="copyMessage">Email copied!</div>
-        <button class="refresh-btn" onclick="refreshEmails()">Refresh</button>
-    </div>
-    <div class="email-container">
-        <div class="content-box" id="emailList">
-            {% for email in emails %}
-            <div class="email-item {% if email[6] == 'unread' %}unread{% endif %}" 
-                 data-id="{{ email[7] }}" 
-                 onclick="showEmail(event, '{{ email[3] }}', '{{ email[4] }}', '{{ email[5] }}')">
-                <p {% if email[6] == 'unread' %}style="font-weight: bold;"{% endif %}>
-                    {{ email[2] }}
-                </p>
-                <p>
-                    {{ email[3] }}
-                </p>
-                {% if email[6] == 'unread' %}
-                <span class="new-mail-tag">New</span>
-                {% endif %}
+            <div class="email-container terminal-dashboard">
+                <div class="email-list" id="emailList">
+                    {% for email in emails %}
+                    <div class="email-item {% if email[6] == 'unread' %}unread{% endif %}"
+                        data-id="{{ email[7] }}"
+                        onclick="showEmail(event, '{{ email[3] }}', '{{ email[4] }}', '{{ email[5] }}')">
+                        <p class="email-item-sender">
+                            {{ email[2] }}
+                        </p>
+                        <p class="email-item-subject">
+                            {{ email[3] }}
+                        </p>
+                        {% if email[6] == 'unread' %}
+                        <span class="new-mail-tag">NEW</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="email-details" id="emailDetails">
+                    <h2 class="email-subject" id="emailSubject"></h2>
+                    <p class="email-sender" id="emailSender"></p>
+                    <div id="emailBody"></div>
+                </div>
             </div>
-            {% endfor %}
         </div>
-        <div class="email-details" id="emailDetails">
-            <h2 class="email-subject" id="emailSubject"></h2>
-            <p class="email-sender" id="emailSender"></p>
-            <p id="emailBody"></p>
-        </div>
-    </div>
-    <footer class="footer">
-        <div class="footer-bottom">
+    </main>
+    <footer>
+        <div class="footer-content">
             <p>Copyright © IHA089</p>
         </div>
     </footer>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
         function copyEmail() {
             email = "{{ user }}";
@@ -89,56 +89,39 @@
                 console.error("Failed to copy email: ", err);
             });
         }
-
         function showEmail(event, subject, body, sender) {
-    const emailDetails = document.getElementById('emailDetails');
-    const emailSubject = document.getElementById('emailSubject');
-    const emailSender = document.getElementById('emailSender');
-    const emailBody = document.getElementById('emailBody');
-
-    const emailItems = document.querySelectorAll('.email-item');
-    emailItems.forEach(item => item.classList.remove('selected'));
-
-    const clickedEmail = event.currentTarget;
-    clickedEmail.classList.add('selected');
-
-    if (clickedEmail.classList.contains('unread')) {
-        clickedEmail.classList.remove('unread');
-        const subjectText = clickedEmail.querySelector('p:first-child');
-        const senderText = clickedEmail.querySelector('p:last-child');
-
-        if (subjectText) subjectText.style.fontWeight = 'normal';
-        if (senderText) senderText.style.fontWeight = 'normal';
-
-        const newMailTag = clickedEmail.querySelector('.new-mail-tag');
-        if (newMailTag) newMailTag.remove();
-
-        const uniqueKey = clickedEmail.getAttribute('data-id');
-        $.ajax({
-            url: '/mark-as-read',
-            type: 'POST',
-            data: JSON.stringify({ unique_key: uniqueKey }),
-            contentType: 'application/json',
-            success: function (response) {
-                console.log("Email marked as read successfully", response);
-            },
-            error: function (xhr, status, error) {
-                console.error("Error marking email as read:", error);
+            const emailDetails = document.getElementById('emailDetails');
+            const emailSubject = document.getElementById('emailSubject');
+            const emailSender = document.getElementById('emailSender');
+            const emailBody = document.getElementById('emailBody');
+            const emailItems = document.querySelectorAll('.email-item');
+            emailItems.forEach(item => item.classList.remove('selected'));
+            const clickedEmail = event.currentTarget;
+            clickedEmail.classList.add('selected');
+            if (clickedEmail.classList.contains('unread')) {
+                clickedEmail.classList.remove('unread');
+                const uniqueKey = clickedEmail.getAttribute('data-id');
+                $.ajax({
+                    url: '/mark-as-read',
+                    type: 'POST',
+                    data: JSON.stringify({ unique_key: uniqueKey }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        console.log("Email marked as read successfully", response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error marking email as read:", error);
+                    }
+                });
             }
-        });
-    }
-
-    emailSubject.textContent = subject;
-    emailSender.textContent = `From: ${sender}`;
-    emailBody.innerHTML = body;
-    emailDetails.style.display = 'block';
-}
-
-
+            emailSubject.textContent = subject;
+            emailSender.textContent = `From: ${sender}`;
+            emailBody.innerHTML = body;
+            emailDetails.style.display = 'flex';
+        }
         function refreshEmails() {
             window.location.reload();
         }
-
     </script>
 </body>
 </html>
