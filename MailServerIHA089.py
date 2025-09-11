@@ -1,7 +1,6 @@
 from flask import Flask, request, make_response, render_template, session, jsonify, redirect, url_for
 from functools import wraps
 import jwt as pyjwt
-import check_module
 import sqlite3, datetime, uuid, hashlib, logging, os, random, string
 
 log = logging.getLogger('werkzeug')
@@ -64,9 +63,6 @@ def check_database():
         create_database()
 
 check_database()
-
-if not check_module.install_each_module():
-    sys.exit(1)
 
 def get_db_connection():
     db_path = os.path.join(os.getcwd(), mail_loc, "mail_users.db")
