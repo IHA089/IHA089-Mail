@@ -41,7 +41,7 @@
                     <div class="copy-message" id="copyMessage">Email copied!</div>
                 </div>
                 <div class="refresh-info">
-                    <button class="refresh-btn" onclick="refreshEmails()">Refresh</button>
+                    <button class="refresh-btn" onclick="manualRefresh()">Refresh</button>
                 </div>
             </div>
 
@@ -81,12 +81,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
         const loggedUserEmail = {{ user|tojson }};
+        let openedEmailId = null;
 
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('copyBtn').addEventListener('click', copyEmail);
-            document.querySelectorAll('.email-item').forEach(item => {
-                item.addEventListener('click', showEmail);
-            });
+            attachEmailClickHandlers();
+
+            setInterval(refreshEmails, 5000);
         });
 
         function copyEmail() {
@@ -99,28 +100,17 @@
 
         function showEmail(event) {
             const clickedEmail = event.currentTarget;
+            openedEmailId = clickedEmail.getAttribute('data-id'); 
 
-            // Parse JSON-encoded values safely
-            let subject = "";
-            let body = "";
-            let sender = "";
-            try {
-                subject = JSON.parse(clickedEmail.getAttribute('data-subject') || '""');
-                body = JSON.parse(clickedEmail.getAttribute('data-body') || '""');
-                sender = JSON.parse(clickedEmail.getAttribute('data-sender') || '""');
-            } catch (e) {
-                console.error('Failed to parse mail data attributes:', e);
-            }
+            let subject = JSON.parse(clickedEmail.getAttribute('data-subject') || '""');
+            let body = JSON.parse(clickedEmail.getAttribute('data-body') || '""');
+            let sender = JSON.parse(clickedEmail.getAttribute('data-sender') || '""');
 
-            // Highlight selected email
             document.querySelectorAll('.email-item').forEach(item => item.classList.remove('selected'));
             clickedEmail.classList.add('selected');
 
-            // Remove unread styling and NEW tag, mark as read on the server
             if (clickedEmail.classList.contains('unread')) {
                 clickedEmail.classList.remove('unread');
-
-                // Remove the NEW badge span
                 const newTag = clickedEmail.querySelector('.new-mail-tag');
                 if (newTag) newTag.remove();
 
@@ -129,13 +119,10 @@
                     url: '/mark-as-read',
                     type: 'POST',
                     data: JSON.stringify({ unique_key: uniqueKey }),
-                    contentType: 'application/json',
-                    success: res => console.log("Email marked as read", res),
-                    error: err => console.error("Error marking email as read:", err)
+                    contentType: 'application/json'
                 });
             }
 
-            // Display email details
             document.getElementById('emailSubject').textContent = subject || "(No Subject)";
             document.getElementById('emailSender').textContent = `From: ${sender || "(Unknown)"}`;
             document.getElementById('emailBody').innerHTML = body || "<i>(No content)</i>";
@@ -143,7 +130,34 @@
         }
 
         function refreshEmails() {
-            window.location.reload();
+            $.ajax({
+                url: '/get-emails',   
+                type: 'GET',
+                success: function (data) {
+                    $('#emailList').html(data);
+                    attachEmailClickHandlers();
+
+                    if (openedEmailId) {
+                        const reopened = document.querySelector(`.email-item[data-id="${openedEmailId}"]`);
+                        if (reopened) {
+                            reopened.classList.add('selected');
+                        }
+                    }
+                },
+                error: function (err) {
+                    console.error("Error refreshing emails:", err);
+                }
+            });
+        }
+
+        function manualRefresh() {
+            refreshEmails();
+        }
+
+        function attachEmailClickHandlers() {
+            document.querySelectorAll('.email-item').forEach(item => {
+                item.addEventListener('click', showEmail);
+            });
         }
     </script>
 </body>
